@@ -15,7 +15,7 @@ function taskCreateController($scope,taskRESTService,$state,editMode,taskDataRes
 
     // initialization
     if(vm.uiConfig.editMode===true){
-        vm.uiConfig.model = taskDataResolved;
+        vm.uiConfig.model = taskDataResolved.data[0];
     }
     // checking if edit mode is true or false
 
@@ -38,13 +38,13 @@ function taskCreateController($scope,taskRESTService,$state,editMode,taskDataRes
     }
     function updateTask(taskModel){
         var taskId = taskModel.id;
-        taskRESTService.updateTaskById(taskId,taskModel.taskMessage)
+        taskRESTService.updateTaskById(taskId,taskModel)
             .then(function(data){
                 $state.go('app.task.read');
             })
             .catch(function(error){
                 console.log(error);
-                alert('Task create failed');
+                alert('Task update failed');
             });
     }
 }

@@ -1,8 +1,8 @@
 angular.module('task-module')
 .service('taskRESTService',taskRESTService);
 
-function taskRESTService(){
-
+function taskRESTService($http){
+    var serverAddress = "http://localhost:5000/api/v1.0";
     return {
         createTask : createTask,
         readTask : readTask,
@@ -13,94 +13,82 @@ function taskRESTService(){
     // function to create task 
     function createTask(taskModel){
         return new Promise(function(resolve,reject){
-            var allTask = localStorage.getItem('task');
-            if(allTask === null || allTask === undefined){
-                allTask = [];
-            }else {
-                allTask = JSON.parse(allTask);
-            }
-            taskModel.id = allTask.length + 1;
-            taskModel.createdAt = new Date();
-            taskModel.updatedAt = new Date();
-            allTask.push(taskModel);
-            window.localStorage.setItem('task',JSON.stringify(allTask));
-            resolve();
+            var options = {
+                method : "POST",
+                url : serverAddress+"/task",
+                data : taskModel
+            };
+            //sending data to server
+            $http(options)
+            .then(function(data){
+                resolve(data.data);
+            }).catch(function(error){
+                console.log(error);
+                resolve(error);
+            });
         });
-
     }
 
     function readTask(){
         return new Promise(function(resolve,reject){
-            var allTask = window.localStorage.getItem('task');
-            if(allTask === null || allTask === undefined){
-                allTask = [];
-            }else {
-                allTask = JSON.parse(allTask);
-            }
-            resolve(allTask);
+            var options = {
+                method : "GET",
+                url : serverAddress+"/task"
+            };
+            $http(options)
+            .then(function(data){
+                resolve(data.data.data);
+            })
+            .catch(function(error){
+                console.log(error);
+                reject(error);
+            });
         });
     }
     // read task by id
     function readTaskById(taskId){
         return new Promise(function(resolve,reject){
-            var allTask = window.localStorage.getItem('task');
-            if(allTask === null || allTask === undefined){
-                allTask = [];
-            }else {
-                allTask = JSON.parse(allTask);
-            }
-            // now since all the task has been retrieved from the localstorage
-            //finding the task
-            var taskFoundData = null;
-            allTask.forEach(function(element){
-                console.log(element.id +":"+taskId);
-                if(element.id==taskId){
-                    taskFoundData = element;
-                }
-            });
-            resolve(taskFoundData);
+           var options = {
+                method : "GET",
+                url : serverAddress + "/task/id/"+taskId
+           };
+           $http(options)
+           .then(function(data){
+               resolve(data.data);
+           }).catch(function(error){
+
+           });
         });
     }
-    function updateTaskById(taskId,taskMessage){
+    function updateTaskById(taskId,taskModel){
         return new Promise(function(resolve,reject){
-            var allTask = window.localStorage.getItem('task');
-            if(allTask === null || allTask === undefined){
-                allTask = [];
-            }else {
-                allTask = JSON.parse(allTask);
-            }
-            //finding the task
-            var taskFoundData = null;
-            allTask.forEach(function(element){
-                console.log(element.id +":"+taskId);
-                if(element.id==taskId){
-                    element.taskMessage = taskMessage;
-                    element.updatedAt = new Date();
-                }
+            var options = {
+                method : "PUT",
+                url : serverAddress + "/task/id/"+taskId,
+                data : taskModel
+            };
+            $http(options)
+            .then(function(data){
+                resolve(data.data);
+            }).catch(function(error){
+                reject(error);
             });
-            window.localStorage.setItem('task',JSON.stringify(allTask));
-            resolve(taskFoundData);
+
         });
     }
     function deleteTaskById(taskId){
         return new Promise(function(resolve,reject){
-            var allTask = window.localStorage.getItem('task');
-            if(allTask === null || allTask === undefined){
-                allTask = [];
-            }else {
-                allTask = JSON.parse(allTask);
-            }
-            // now since all the task has been retrieved from the localstorage
-            //finding the task
-            var indexToDelete = null;
-            allTask.forEach(function(element,$index){
-                if(element.id==taskId){
-                    indexToDelete = $index;
-                }
+            var options = {
+                method : "DELETE",
+                url : serverAddress + "/task/id/"+taskId
+            };
+            $http(options)
+            .then(function(data){
+                resolve(data.data);
+            }).catch(function(error){
+                console.log(error);
+                alert('Error occurred while deleting task');
             });
-            allTask.splice(indexToDelete,1);
-            window.localStorage.setItem('task',JSON.stringify(allTask));
-            resolve(allTask);
         });
     }
 

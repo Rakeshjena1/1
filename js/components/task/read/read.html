@@ -18,7 +18,7 @@
                 <tbody>
                 <tr ng-repeat="eachData in vm.uiConfig.allTaskList track by $index">
                     <td>{{$index+1}}</td>
-                    <td ng-click="vm.editTaskById(eachData.id)">{{eachData.taskMessage}}</td>
+                    <td ng-click="vm.editTaskById(eachData.id)" style="cursor:pointer">{{eachData.taskMessage}}</td>
                     <td>{{eachData.createdAt | date}}</td>
                     <td>{{eachData.updatedAt | date}}</td>
                     <td>
